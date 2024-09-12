@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
 const QuizTaker = ({ quiz, onComplete, setUserAnswers }) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);  // Track current question
-  const [selectedAnswer, setSelectedAnswer] = useState(null);  // Track selected answer for each question
-  const [score, setScore] = useState(0);  // Track score
-  const [answers, setAnswers] = useState([]);  // Store all user answers
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [score, setScore] = useState(0);
+  const [answers, setAnswers] = useState([]); // Stores all user answers
 
   const handleAnswerSelection = (answer) => {
-    setSelectedAnswer(answer);  // Set selected answer
+    setSelectedAnswer(answer);
   };
 
   const handleNextQuestion = () => {
@@ -15,40 +15,32 @@ const QuizTaker = ({ quiz, onComplete, setUserAnswers }) => {
       alert('Please select an answer before moving on');
       return;
     }
-  
-    // Log both answers for debugging
-    console.log("Selected Answer:", selectedAnswer);
-    console.log("Correct Answer:", quiz[currentQuestion].correctAnswer);
-  
-    // Trim and compare the answers in a case-insensitive manner
-    const isCorrect =
-      quiz[currentQuestion].correctAnswer.trim().toLowerCase() ===
-      selectedAnswer.trim().toLowerCase();
-  
-    console.log("Is Correct:", isCorrect);
-  
-    // Update score if the answer is correct
+
+    // Checking the selected answers
+    const isCorrect = quiz[currentQuestion].correctAnswer.trim().toLowerCase() === selectedAnswer.trim().toLowerCase();
+
+    // Updating the score if answer is correct
     if (isCorrect) setScore(score + 1);
-  
-    // Store user answer for analysis later
-    setAnswers([...answers, selectedAnswer]);
-  
-    // Move to the next question or submit the quiz
+
+    // Updating answers array
+    const updatedAnswers = [...answers, selectedAnswer];
+    setAnswers(updatedAnswers);
+    setUserAnswers(updatedAnswers);  // Passing updated answers to the parent
+
+    // Checking if it's the last question
     if (currentQuestion + 1 < quiz.length) {
+      // Moving to the next question
       setCurrentQuestion(currentQuestion + 1);
-      setSelectedAnswer(null); // Reset for the next question
+      setSelectedAnswer(null);  // Resetting selected answer
     } else {
-      // Pass final score and user answers back to QuizPage
-      setUserAnswers([...answers, selectedAnswer]);
-      onComplete(score + (isCorrect ? 1 : 0)); // Complete quiz with final score
+      
+      onComplete(score + (isCorrect ? 1 : 0));  //  
     }
   };
 
   return (
     <div className="quiz-container">
       <h2 className="quiz-question">{quiz[currentQuestion].question}</h2>
-
-      {/* Display multiple choice options */}
       <div className="quiz-options">
         {quiz[currentQuestion].options.map((option, index) => (
           <label key={index} className="option-label">
@@ -57,14 +49,13 @@ const QuizTaker = ({ quiz, onComplete, setUserAnswers }) => {
               name="answer"
               value={option}
               checked={selectedAnswer === option}
-              onChange={() => handleAnswerSelection(option)}
+              onChange={() => handleAnswerSelection(option)}  
               className="option-input"
             />
             {option}
           </label>
         ))}
       </div>
-
       <button className="quiz-button" onClick={handleNextQuestion}>
         {currentQuestion + 1 === quiz.length ? 'Submit Quiz' : 'Next Question'}
       </button>

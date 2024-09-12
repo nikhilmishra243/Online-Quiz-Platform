@@ -10,11 +10,13 @@ const QuizPage = () => {
   const [userAnswers, setUserAnswers] = useState([]);
 
   const handleQuizCompletion = (finalScore) => {
+    // Pass the score and userAnswers to the result page
     navigate('/result', { state: { score: finalScore, userAnswers: userAnswers } });
   };
 
   const handleTimeUp = () => {
-    handleQuizCompletion(0);  // Handle submission if time runs out
+    // Handle submission if time runs out
+    handleQuizCompletion(0);
   };
 
   return (
